@@ -14,12 +14,12 @@ The important parameters sent to the AzureAD in this call are:
 
 The important response parameters received from this AzureAD service are:
 
-          access_token –
-          refresh_token – 
+          access_token – will be used in signing
+          refresh_token – will be used in signing
           id_token – This is the unsigned JWT received from AzuredAD which will be further signed and sent in the response body.
  If the id_token is received meaning user is authenticated and should allow access.
  
-After getting the unsigned JWT from AzureAD server, another JWT is created which is signed using a different secret key (Any secret key can be used here. In this example 'verify') and sends it in the response. 
+After getting the unsigned JWT from AzureAD server, another JWT is created which is signed using a different secret key (Any secret key can be used here. In this example the secret is 'verify') and sends it in the response. 
 Except login all other requests should have signed token in their header. 
 
 Before calling any services, Filter will identify if the request is correct or not by validating the signed token received in the request. 
@@ -27,5 +27,16 @@ Before calling any services, Filter will identify if the request is correct or n
  
 # Note
 Required DB information and Active Directory's client related info should be added in application.properties file. 
+
+db.driver=
+db.url=
+db.username = 
+db.password =
+AD.azureRequestURL=
+AD.azureRequestResponse=
+AD.azureRequestClientId=
+AD.azureRequestGrantType=password
+AD.azureRequestScope=openid
+AD.azureRequestClientSecret=
 
 
