@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+ 		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+ 		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop 
+	    http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<context:property-placeholder
+		location="classpath:application.properties,file:${CONFIG_FILE}"
+		ignore-resource-not-found="true" />
+	<context:annotation-config />
+
+	<!-- <aop:aspectj-autoproxy /> -->
+
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+
+	<bean id="logAspect" class="com.jersey.aspects.LoggerAspect">
+		<!-- configure properties of aspect here as normal -->
+	</bean>
+
+	<!-- Aspect Declaration -->
+	<aop:config>
+		<aop:aspect id="loggingAspect" ref="logAspect">  <!-- Declaring Aspect -->
+			<aop:pointcut id="serviceLayer" expression="execution(* com.jersey.*.imp.*.*(..))" /> <!-- Declaring pointcut -->
+			<aop:before pointcut-ref="serviceLayer" method="logEntryInServiceLayer" />  <!--declaring advices -->
+			<aop:after pointcut-ref="serviceLayer" method="logExitInServiceLayer" />
+			<aop:after-throwing pointcut-ref="serviceLayer"
+				method="logExitAfterThrowing" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="azureAdPropertiesBean" class="com.jersey.services.imp.AzureAdProperties">
+		<property name="azureRequestURL" value="${AD.azureRequestURL}" />
+		<property name="azureRequestResponse" value="${AD.azureRequestResponse}" />
+		<property name="azureRequestClientId" value="${AD.azureRequestClientId}" />
+		<property name="azureRequestGrantType" value="${AD.azureRequestGrantType}" />
+		<property name="azureRequestScope" value="${AD.azureRequestScope}" />
+		<property name="azureRequestClientSecret" value="${AD.azureRequestClientSecret}" />
+	</bean>
+
+	<bean id="adaBean" class="com.jersey.services.imp.ADA">
+		<property name="azureAdProperties" ref="azureAdPropertiesBean" />
+	</bean>
+
+	<bean id="userDaoImp" class="com.jersey.dao.imp.UserDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="userController" class="com.jersey.controller.imp.UserController">
+		<property name="iUserDao" ref="userDaoImp" />
+	</bean>
+	<bean id="userService" class="com.jersey.services.imp.UserService">
+		<property name="iuserController" ref="userController" />
+	</bean>
+	<bean id="tokenAuthenticationFilter" class="com.jersey.authFilter.TokenAuthenticationFilter">
+		<property name="iuserController" ref="userController" />
+	</bean>
+	<!-- bean specific to connection setting -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db.url}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+</beans>	

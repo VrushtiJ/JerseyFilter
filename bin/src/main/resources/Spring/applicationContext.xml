@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+ 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+ 
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<context:property-placeholder
+		location="classpath:cloudserver.properties,file:${CONFIG_FILE}"
+		ignore-resource-not-found="true" />
+	<context:annotation-config />
+
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+
+	<!-- // <context:component-scan base-package="com.deloitte.cloud.dao.imp" 
+		/> -->
+
+
+	<bean id="userDaoImp" class="com.deloitte.cloud.dao.imp.UserDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="userEventDaoImp" class="com.deloitte.cloud.dao.imp.UserEventDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="surveyAnswerDaoImp" class="com.deloitte.cloud.dao.imp.SurveyAnswerDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="userController" class="com.deloitte.cloud.controller.imp.UserController">
+		<property name="iUserDao" ref="userDaoImp" />
+	</bean>
+
+	<bean id="userEventController" class="com.deloitte.cloud.controller.imp.UserEventController">
+		<property name="iUserEventDao" ref="userEventDaoImp" />
+		<property name='iUserDao' ref='userDaoImp' />
+	</bean>
+
+	<bean id="userService" class="com.deloitte.cloud.services.imp.UserService">
+		<property name="iuserController" ref="userController" />
+	</bean>
+
+	<bean id="userEventService" class="com.deloitte.cloud.services.imp.UserEventService">
+		<property name="iUserEventController" ref="userEventController" />
+		<!-- <property name="iUserController" ref="userController"/> -->
+	</bean>
+
+	<bean id="surveyAnswerController"
+		class="com.deloitte.cloud.controller.imp.SurveyAnswerController">
+		<property name="iSurveyAnswerDao" ref="surveyAnswerDaoImp" />
+		<property name="iUserDao" ref="userDaoImp" />
+	</bean>
+
+	<bean id="surveyAnswerService" class="com.deloitte.cloud.services.imp.SurveyAnswerService">
+		<property name="iSurveyAnswerController" ref="surveyAnswerController" />
+	</bean>
+
+	<!-- <context:component-scan base-package="com.deloitte.cloud.services.imp" 
+		/> <context:component-scan base-package="com.deloitte.cloud.dao.controller.impl" 
+		/> -->
+	<!-- bean specific to connection setting -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db.url}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> <property 
+		name="url" value="jdbc:mysql://localhost:3306/cloudDatabase" /> <property 
+		name="username" value="root" /> <property name="password" value="pramulkant" 
+		/> </bean> -->
+
+
+
+
+
+
+
+</beans>	
