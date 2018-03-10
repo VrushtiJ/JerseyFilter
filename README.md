@@ -28,15 +28,15 @@ Before calling any services, Filter will identify if the request is correct or n
 # Note
 Required DB information and Active Directory's client related info should be added in application.properties file. 
 
-db.driver=
-db.url=
-db.username = 
-db.password =
-AD.azureRequestURL=
-AD.azureRequestResponse=
-AD.azureRequestClientId=
-AD.azureRequestGrantType=password
-AD.azureRequestScope=openid
-AD.azureRequestClientSecret=
+                    db.driver=
+                    db.url=
+                    db.username = 
+                    db.password =
+                    AD.azureRequestURL=
+                    AD.azureRequestResponse=
+                    AD.azureRequestClientId=
+                    AD.azureRequestGrantType=
+                    AD.azureRequestScope=
+                    AD.azureRequestClientSecret=
 
 
