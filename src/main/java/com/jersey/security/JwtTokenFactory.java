@@ -55,7 +55,7 @@ public class JwtTokenFactory {
 
 		Boolean isTokenValid = false;
 		try{
-			Algorithm algorithm = Algorithm.HMAC512("anthonyTamato");
+			Algorithm algorithm = Algorithm.HMAC512("verify");
 			JWTVerifier verifier = JWT.require(algorithm).withSubject(userEmail).build();
 
 			DecodedJWT jwt = verifier.verify(signedToken);
