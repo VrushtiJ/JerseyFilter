@@ -1,11 +1,7 @@
 # JerseyFilter
 Implementation of ContainerRequestFilter in Jersey which will be used for validation any request coming from web service.
 
-# DB connection and Windows Azure AD properties
-Required DB information and Active Directory's client related info should be added in application.properties file.
-
 # Flow
-
 User Id and password are received in JSON format. Filter demurrs out login request and standard services are called where the AzureAD token service to get the JWT will be called. 
 
 The important parameters sent to the AzureAD in this call are:
@@ -29,7 +25,7 @@ Except login all other requests should have signed token in their header.
 Before calling any services, Filter will identify if the request is correct or not by validating the signed token received in the request. 
 
  
- 
- 
+# Note
+Required DB information and Active Directory's client related info should be added in application.properties file. 
 
 
